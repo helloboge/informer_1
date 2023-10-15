@@ -57,7 +57,7 @@ X='AQI'
 # df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/焦作.csv")
 # X = 'AQI'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
 #
-series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['Date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
+series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['time'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
 #
 test = df_raw_data[X].values[int(len(df_raw_data[X].values)*0.7):]  # 从X列的数据中提取后80%部分，并将结果存储在test变量中
 #
