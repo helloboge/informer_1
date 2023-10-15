@@ -53,7 +53,7 @@ plt.rcParams['axes.unicode_minus'] = False
 
 
 # df_raw_data = pd.read_csv('焦作.csv', usecols=[0, 1])  # 从名为'焦作.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
-df_raw_data = pd.read_csv("./data/ETT/ETTh1.csv")
+df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
 X = 'OT'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
 #
 series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
@@ -408,7 +408,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "./"
+    rootpath = "/kaggle/working/dbo-inf/"
     trainrate = 0.7
 
     def training(X):
@@ -548,7 +548,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "./"
+    rootpath = "/kaggle/working/dbo-inf/"
     trainrate = 0.7
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
