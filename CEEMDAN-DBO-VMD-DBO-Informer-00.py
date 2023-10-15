@@ -711,22 +711,22 @@ df_integrate_result.plot(title='Co-IMFs', subplots=True)  # 绘制共同IMFs的�
 # In[20]:
 
 
-# 通过VMD分解高频的Co-IMF0
-df_vmd_co_imf0 = vmd_decompose(df_integrate_result['co-imf0'])  # 使用 VMD 对高频的 Co-IMF0 进行分解，得到分解结果保存在数据框 df_vmd_co_imf0 中
+# # 通过VMD分解高频的Co-IMF0
+# df_vmd_co_imf0 = vmd_decompose(df_integrate_result['co-imf0'])  # 使用 VMD 对高频的 Co-IMF0 进行分解，得到分解结果保存在数据框 df_vmd_co_imf0 中
 
 
-# In[ ]:
+# # In[ ]:
 
 
-df_vmd_co_imf0.plot(title='VMD 分解', subplots=True, figsize=(10, 8))  # 绘制 VMD 分解结果 df_vmd_co_imf0 的子图，设置标题为 'VMD 分解'，图形大小为 (10, 8)
+# df_vmd_co_imf0.plot(title='VMD 分解', subplots=True, figsize=(10, 8))  # 绘制 VMD 分解结果 df_vmd_co_imf0 的子图，设置标题为 'VMD 分解'，图形大小为 (10, 8)
 
 
-# In[21]:
+# # In[21]:
 
 
-df_vmd_co_imf0['sum'] = df_integrate_result['co-imf0']  # 将 df_integrate_result['co-imf0'] 列赋值给 df_vmd_co_imf0 的 'sum' 列
+# df_vmd_co_imf0['sum'] = df_integrate_result['co-imf0']  # 将 df_integrate_result['co-imf0'] 列赋值给 df_vmd_co_imf0 的 'sum' 列
 
-co_imf0_predict_raw, co_imf0_gru_evaluation, co_imf0_train_loss = informer_predict(df_vmd_co_imf0)  # 使用 informer 进行预测并得到预测结果、评估结果和训练损失
+co_imf0_predict_raw, co_imf0_gru_evaluation, co_imf0_train_loss = informer_predict(df_integrate_result['co-imf0'])  # 使用 informer 进行预测并得到预测结果、评估结果和训练损失
 
 print('======Co-IMF0 最终预测======\n', co_imf0_gru_evaluation)  # 打印 Co-IMF0 的最终预测评估结果
 
