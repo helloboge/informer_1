@@ -435,7 +435,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
         model = Informer().to(device)
         criterion = nn.MSELoss()
-        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-3)
+        optimizer = optim.Adam(model.parameters(), lr=lr)
 
         # show
         # print("show...")
