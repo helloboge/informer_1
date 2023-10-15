@@ -52,11 +52,12 @@ plt.rcParams['axes.unicode_minus'] = False
 # In[4]:
 
 
-# df_raw_data = pd.read_csv('焦作.csv', usecols=[0, 1])  # 从名为'焦作.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
-df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
-X = 'OT'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
+df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/焦作.csv', usecols=[0, 1])  # 从名为'焦作.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+X='AQI'
+# df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/焦作.csv")
+# X = 'AQI'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
 #
-series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
+series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['Date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
 #
 test = df_raw_data[X].values[int(len(df_raw_data[X].values)*0.7):]  # 从X列的数据中提取后80%部分，并将结果存储在test变量中
 #
@@ -284,7 +285,7 @@ def sample_entropy(df_ceemdan=None, mm=1, r=0.1):
 
 def kmeans_cluster(df_sampen=None, num_clusters=3): 
     np_integrate_form = KMeans(n_clusters=num_clusters, random_state=9).fit_predict(df_sampen)  # 使用K均值聚类进行聚类操作
-    df_integrate_form = pd.DataFrame(np_integrate_form, index=['imf'+str(i) for i in range(len(df_sampen.index))], columns=['OT'])  # 创建聚类结果的数据框，设置行索引为'imf' + 对应的索引号，列名为'OT'
+    df_integrate_form = pd.DataFrame(np_integrate_form, index=['imf'+str(i) for i in range(len(df_sampen.index))], columns=['AQI'])  # 创建聚类结果的数据框，设置行索引为'imf' + 对应的索引号，列名为'AQI'
     return df_integrate_form  # 返回聚类结果的数据框
 
 
@@ -294,7 +295,7 @@ def kmeans_cluster(df_sampen=None, num_clusters=3):
 def integrate_imfs(df_integrate_form=None, df_ceemdan=None): 
     df_tmp = pd.DataFrame()  # 创建一个空的数据框用于存储临时结果
     for i in range(df_integrate_form.values.max()+1):
-        df_tmp['imf'+str(i)] = df_ceemdan[df_integrate_form[(df_integrate_form['OT']==i)].index].sum(axis=1)  # 对每个聚类簇内的IMF分量进行求和，得到综合的IMF分量
+        df_tmp['imf'+str(i)] = df_ceemdan[df_integrate_form[(df_integrate_form['AQI']==i)].index].sum(axis=1)  # 对每个聚类簇内的IMF分量进行求和，得到综合的IMF分量
         
     df_integrate_result = df_tmp.T  # 对临时结果进行转置
     df_integrate_result['sampen'] = sample_entropy(df_tmp).values  # 计算综合的IMF分量的样本熵，并将其作为新的列添加到结果数据框中
@@ -419,7 +420,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
 
-        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        df = pd.read_csv(rootpath + "data/ETT/焦作.csv")
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -554,7 +555,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    df = pd.read_csv(rootpath + "data/ETT/焦作.csv")
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
