@@ -14,8 +14,7 @@ import pandas as pd                 # 导入pandas库进行数据操作和分析
 import numpy as np                  # 导入numpy并使用别名"np"以方便使用
 import matplotlib.pyplot as plt    # 导入matplotlib库进行数据可视化操作
 from PyEMD import CEEMDAN           # 从PyEMD库导入CEEMDAN模块
-from pyroapi import optim
-import pyro4
+from pyroapi import optim, pyro
 from sampen import sampen2          # 从sampen库导入sampen2模块
 from vmdpy import VMD               # 从vmdpy库导入VMD模块
 import tensorflow as tf             # 导入tensorflow库进行机器学习和深度学习
