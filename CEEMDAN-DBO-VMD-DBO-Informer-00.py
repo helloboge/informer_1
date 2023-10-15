@@ -414,8 +414,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
     def training(X):
         lr=X[0]
-        epochs=X[1]
-        batch_size=X[2]
+        epochs=int(X[1])
+        batch_size=int(X[2])
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
@@ -543,7 +543,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     print('最优解：', GbestPositon)
 
     GbestPositon = GbestPositon[0]
-    lr = int(GbestPositon[0])
+    lr = GbestPositon[0]
     epochs = int(GbestPositon[1])
     batch_size = int(GbestPositon[2])
     seq_len = 96
