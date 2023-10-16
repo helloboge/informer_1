@@ -537,7 +537,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     ub = np.array([0.001, 10, 64])  # 优化算法上界
     lb = np.array([0.00001, 1, 1])  # 优化算法下界
     pop = 5  # 种群大小
-    MaxIter = 10  # 最大迭代次数
+    MaxIter = 1  # 最大迭代次数
     dim = 3  # 优化变量维度
     GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
     print('最优适应度值：', GbestScore)
