@@ -14,7 +14,8 @@ import pandas as pd                 # 导入pandas库进行数据操作和分析
 import numpy as np                  # 导入numpy并使用别名"np"以方便使用
 import matplotlib.pyplot as plt    # 导入matplotlib库进行数据可视化操作
 from PyEMD import CEEMDAN           # 从PyEMD库导入CEEMDAN模块
-from pyroapi import optim
+from pyroapi import pyro
+from torch import optim
 from sampen import sampen2          # 从sampen库导入sampen2模块
 from vmdpy import VMD               # 从vmdpy库导入VMD模块
 import tensorflow as tf             # 导入tensorflow库进行机器学习和深度学习
@@ -52,9 +53,10 @@ plt.rcParams['axes.unicode_minus'] = False
 # In[4]:
 
 
-# df_raw_data = pd.read_csv('焦作.csv', usecols=[0, 1])  # 从名为'焦作.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
-df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
-X = 'OT'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
+df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+X='OT'
+# df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
+# X = 'OT'  # 将字符串'OT'赋值给变量X，表示使用该列作为特征
 #
 series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
 #
@@ -413,8 +415,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
     def training(X):
         lr=X[0]
-        epochs=X[1]
-        batch_size=X[2]
+        epochs=int(X[1])
+        batch_size=int(X[2])
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
@@ -434,7 +436,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
         model = Informer().to(device)
         criterion = nn.MSELoss()
-        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-3)
+        optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
 
         # show
         # print("show...")
@@ -541,8 +543,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     print('最优适应度值：', GbestScore)
     print('最优解：', GbestPositon)
 
-    GbestPositon = GbestPositon[0]
-    lr = int(GbestPositon[0])
+    # GbestPositon = GbestPositon[0]
+    lr = GbestPositon[0]
     epochs = int(GbestPositon[1])
     batch_size = int(GbestPositon[2])
     seq_len = 96
@@ -710,22 +712,22 @@ df_integrate_result.plot(title='Co-IMFs', subplots=True)  # 绘制共同IMFs的�
 # In[20]:
 
 
-# 通过VMD分解高频的Co-IMF0
-df_vmd_co_imf0 = vmd_decompose(df_integrate_result['co-imf0'])  # 使用 VMD 对高频的 Co-IMF0 进行分解，得到分解结果保存在数据框 df_vmd_co_imf0 中
+# # 通过VMD分解高频的Co-IMF0
+# df_vmd_co_imf0 = vmd_decompose(df_integrate_result['co-imf0'])  # 使用 VMD 对高频的 Co-IMF0 进行分解，得到分解结果保存在数据框 df_vmd_co_imf0 中
 
 
-# In[ ]:
+# # In[ ]:
 
 
-df_vmd_co_imf0.plot(title='VMD 分解', subplots=True, figsize=(10, 8))  # 绘制 VMD 分解结果 df_vmd_co_imf0 的子图，设置标题为 'VMD 分解'，图形大小为 (10, 8)
+# df_vmd_co_imf0.plot(title='VMD 分解', subplots=True, figsize=(10, 8))  # 绘制 VMD 分解结果 df_vmd_co_imf0 的子图，设置标题为 'VMD 分解'，图形大小为 (10, 8)
 
 
-# In[21]:
+# # In[21]:
 
 
-df_vmd_co_imf0['sum'] = df_integrate_result['co-imf0']  # 将 df_integrate_result['co-imf0'] 列赋值给 df_vmd_co_imf0 的 'sum' 列
+# df_vmd_co_imf0['sum'] = df_integrate_result['co-imf0']  # 将 df_integrate_result['co-imf0'] 列赋值给 df_vmd_co_imf0 的 'sum' 列
 
-co_imf0_predict_raw, co_imf0_gru_evaluation, co_imf0_train_loss = informer_predict(df_vmd_co_imf0)  # 使用 informer 进行预测并得到预测结果、评估结果和训练损失
+co_imf0_predict_raw, co_imf0_gru_evaluation, co_imf0_train_loss = informer_predict(df_integrate_result['co-imf0'])  # 使用 informer 进行预测并得到预测结果、评估结果和训练损失
 
 print('======Co-IMF0 最终预测======\n', co_imf0_gru_evaluation)  # 打印 Co-IMF0 的最终预测评估结果
 
