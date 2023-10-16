@@ -53,12 +53,12 @@ plt.rcParams['axes.unicode_minus'] = False
 # In[4]:
 
 
-df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/焦作.csv', usecols=[0, 1])  # 从名为'焦作.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
 X='AQI'
-# df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/焦作.csv")
+# df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
 # X = 'AQI'  # 将字符串'AQI'赋值给变量X，表示使用该列作为特征
 #
-series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['time'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
+series_close = pd.Series(df_raw_data[X].values, index=df_raw_data['date'])  # 使用列名为X的数据创建Series对象，使用'Date'列作为索引
 #
 test = df_raw_data[X].values[int(len(df_raw_data[X].values)*0.7):]  # 从X列的数据中提取后80%部分，并将结果存储在test变量中
 #
@@ -421,7 +421,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
 
-        df = pd.read_csv(rootpath + "data/ETT/焦作.csv")
+        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -556,7 +556,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    df = pd.read_csv(rootpath + "data/ETT/焦作.csv")
+    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
