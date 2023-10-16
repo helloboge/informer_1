@@ -511,7 +511,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
             losses.append(loss.item())
         print("test loss: %.4f" % np.mean(losses))
 
-        temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 98), true.cpu().detach().numpy().reshape(-1, 98))  # 计算均方误差
+        temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
         print(temp_mse)
         return temp_mse
 
