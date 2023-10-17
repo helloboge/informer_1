@@ -640,7 +640,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
     y_test_predict = pred.ravel().reshape(-1, 1)
     scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
-    scalarY.fit(df)
+    train_data = train.iloc[:, 1:].values
+    scalarY.fit(train_data)
     y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
     df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
