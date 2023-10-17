@@ -421,7 +421,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
 
-        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        df = data
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -556,7 +557,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    df = data
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -590,7 +592,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     #     break
 
     # train
-    print("train...")
+    print("final train...")
     model.train()
     for e in range(epochs):
         train_losses = []
@@ -614,12 +616,12 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
             loss.backward()
             optimizer.step()
 
-        print("Epochs:", e, " || train loss: %.4f" % np.mean(train_losses))
+        print("Epochs:", e, " ||final  train loss: %.4f" % np.mean(train_losses))
 
     torch.save(model, rootpath + "log/informer.pkl")
 
     # test
-    print("test...")
+    print("final test...")
     # model = torch.load("./Informer/log/informer.pkl").to(device)
 
     model.eval()
@@ -644,9 +646,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
         loss = criterion(pred, true)
         test_losses.append(loss.item())
-    print("test loss: %.4f" % np.mean(test_losses))
+    print("final test loss: %.4f" % np.mean(test_losses))
 
-    temp_mse = mean_squared_error(pred, true)  # 计算均方误差
+    temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
     print("优化后的均方误差：",temp_mse)
 
     np.save(rootpath + "log/preds", np.array(preds))
