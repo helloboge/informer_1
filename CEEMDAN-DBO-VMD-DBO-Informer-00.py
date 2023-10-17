@@ -421,7 +421,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
 
-        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        df = data
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -556,7 +557,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    df = data
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
