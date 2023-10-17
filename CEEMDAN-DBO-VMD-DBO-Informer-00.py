@@ -423,6 +423,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
         # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
         df = data
+        print(df)
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
