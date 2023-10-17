@@ -417,12 +417,14 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         lr=X[0]
         epochs=int(X[1])
         batch_size=int(X[2])
+        print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
-
-        # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-        df = data
+        print(data)
+        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        df['OT'] = data
+        print(df)
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -438,22 +440,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         model = Informer().to(device)
         criterion = nn.MSELoss()
         optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
-
-        # show
-        # print("show...")
-        # for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-        #     batch_x = batch_x.float().to(device)
-        #     batch_y = batch_y.float()
-        #     batch_x_mark = batch_x_mark.float().to(device)
-        #     batch_y_mark = batch_y_mark.float().to(device)
-        #
-        #     dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-        #     dec_inp = (
-        #         torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-        #     )
-        #     with writer as w:
-        #         w.add_graph(model, (batch_x, batch_x_mark, dec_inp, batch_y_mark))
-        #     break
 
         # train
         print("train...")
@@ -512,23 +498,10 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
             losses.append(loss.item())
         print("test loss: %.4f" % np.mean(losses))
 
-        temp_mse = mean_squared_error(pred, true)  # 计算均方误差
-        print(temp_mse)
+        temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
+        print("均方误差:", temp_mse)
         return temp_mse
 
-        # np.save(rootpath + "log/preds", np.array(preds))
-        # np.save(rootpath + "log/tures", np.array(trues))
-        #
-        # # show
-        # pred = np.load(rootpath + "log/preds.npy")
-        # true = np.load(rootpath + "log/tures.npy")
-        #
-        # print(pred.shape, true.shape)
-        # plt.plot(pred[0, -24:, -1], label="pred")
-        # plt.plot(true[0, -24:, -1], label="true")
-        # plt.legend()
-        # plt.savefig(rootpath + "img/show.png")
-        # plt.show()
 
     #优化参数
     # lr = 0.0001
@@ -538,16 +511,17 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     ub = np.array([0.001, 10, 64])  # 优化算法上界
     lb = np.array([0.00001, 1, 1])  # 优化算法下界
     pop = 5  # 种群大小
-    MaxIter = 10  # 最大迭代次数
+    MaxIter = 1  # 最大迭代次数
     dim = 3  # 优化变量维度
     GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
     print('最优适应度值：', GbestScore)
     print('最优解：', GbestPositon)
 
-    # GbestPositon = GbestPositon[0]
+    GbestPositon = GbestPositon[0]
     lr = GbestPositon[0]
     epochs = int(GbestPositon[1])
     batch_size = int(GbestPositon[2])
+    print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
     seq_len = 96
     label_len = 48
     pred_len = 24
@@ -557,8 +531,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-    df = data
+    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    df['OT'] = data
+    print(df)
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
@@ -575,24 +550,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-3)
 
-    # show
-    # print("show...")
-    # for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-    #     batch_x = batch_x.float().to(device)
-    #     batch_y = batch_y.float()
-    #     batch_x_mark = batch_x_mark.float().to(device)
-    #     batch_y_mark = batch_y_mark.float().to(device)
-    #
-    #     dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-    #     dec_inp = (
-    #         torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-    #     )
-    #     with writer as w:
-    #         w.add_graph(model, (batch_x, batch_x_mark, dec_inp, batch_y_mark))
-    #     break
 
     # train
-    print("train...")
+    print("final train...")
     model.train()
     for e in range(epochs):
         train_losses = []
@@ -616,12 +576,12 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
             loss.backward()
             optimizer.step()
 
-        print("Epochs:", e, " || train loss: %.4f" % np.mean(train_losses))
+        print("Epochs:", e, " ||final  train loss: %.4f" % np.mean(train_losses))
 
     torch.save(model, rootpath + "log/informer.pkl")
 
     # test
-    print("test...")
+    print("final test...")
     # model = torch.load("./Informer/log/informer.pkl").to(device)
 
     model.eval()
@@ -646,9 +606,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
         loss = criterion(pred, true)
         test_losses.append(loss.item())
-    print("test loss: %.4f" % np.mean(test_losses))
+    print("final test loss: %.4f" % np.mean(test_losses))
 
-    temp_mse = mean_squared_error(pred, true)  # 计算均方误差
+    temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
     print("优化后的均方误差：",temp_mse)
 
     np.save(rootpath + "log/preds", np.array(preds))
