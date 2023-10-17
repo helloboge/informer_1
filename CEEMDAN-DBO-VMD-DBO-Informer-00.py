@@ -403,7 +403,7 @@ def evaluation_model(y_test, y_pred):
 # In[15]:
 
 
-def informer_predict(data=None, predict_duration=len(test), fitting=None, scalarY=None):
+def informer_predict(data=None, predict_duration=len(test), fitting=None):
     lr = 0.0001
     epochs = 4
     batch_size = 32
@@ -508,6 +508,16 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     # epochs = 4
     # batch_size = 32
 
+    def round_lr(lr):
+        count=0
+        while(lr*10<1):
+            count+=1
+            lr=lr*10
+        if(lr*10>4):
+            return (10**(-(count)))
+        else:
+            return (10**(-(count+1)))
+
     ub = np.array([0.001, 10, 64])  # 优化算法上界
     lb = np.array([0.00001, 1, 1])  # 优化算法下界
     pop = 5  # 种群大小
@@ -521,6 +531,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     lr = GbestPositon[0]
     epochs = int(GbestPositon[1])
     batch_size = int(GbestPositon[2])
+    lr = round_lr(lr)
     print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
     seq_len = 96
     label_len = 48
@@ -628,7 +639,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
     y_test_predict = pred.ravel().reshape(-1, 1)
-
+    scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
     y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
     df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
