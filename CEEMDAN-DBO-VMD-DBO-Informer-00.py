@@ -420,9 +420,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
-
-        # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-        df = data
+        print(data)
+        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+        df['OT'] = data
         print(df)
         train = df.iloc[: int(trainrate * len(df)), :]
         test = df.iloc[int(trainrate * len(df)):, :]
@@ -439,22 +439,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         model = Informer().to(device)
         criterion = nn.MSELoss()
         optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
-
-        # show
-        # print("show...")
-        # for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-        #     batch_x = batch_x.float().to(device)
-        #     batch_y = batch_y.float()
-        #     batch_x_mark = batch_x_mark.float().to(device)
-        #     batch_y_mark = batch_y_mark.float().to(device)
-        #
-        #     dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-        #     dec_inp = (
-        #         torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-        #     )
-        #     with writer as w:
-        #         w.add_graph(model, (batch_x, batch_x_mark, dec_inp, batch_y_mark))
-        #     break
 
         # train
         print("train...")
@@ -517,19 +501,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         print(temp_mse)
         return temp_mse
 
-        # np.save(rootpath + "log/preds", np.array(preds))
-        # np.save(rootpath + "log/tures", np.array(trues))
-        #
-        # # show
-        # pred = np.load(rootpath + "log/preds.npy")
-        # true = np.load(rootpath + "log/tures.npy")
-        #
-        # print(pred.shape, true.shape)
-        # plt.plot(pred[0, -24:, -1], label="pred")
-        # plt.plot(true[0, -24:, -1], label="true")
-        # plt.legend()
-        # plt.savefig(rootpath + "img/show.png")
-        # plt.show()
 
     #优化参数
     # lr = 0.0001
@@ -576,21 +547,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-3)
 
-    # show
-    # print("show...")
-    # for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-    #     batch_x = batch_x.float().to(device)
-    #     batch_y = batch_y.float()
-    #     batch_x_mark = batch_x_mark.float().to(device)
-    #     batch_y_mark = batch_y_mark.float().to(device)
-    #
-    #     dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-    #     dec_inp = (
-    #         torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-    #     )
-    #     with writer as w:
-    #         w.add_graph(model, (batch_x, batch_x_mark, dec_inp, batch_y_mark))
-    #     break
 
     # train
     print("final train...")
