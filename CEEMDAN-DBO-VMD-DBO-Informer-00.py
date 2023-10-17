@@ -543,7 +543,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     print('最优适应度值：', GbestScore)
     print('最优解：', GbestPositon)
 
-    # GbestPositon = GbestPositon[0]
+    GbestPositon = GbestPositon[0]
     lr = GbestPositon[0]
     epochs = int(GbestPositon[1])
     batch_size = int(GbestPositon[2])
