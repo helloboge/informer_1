@@ -417,6 +417,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         lr=X[0]
         epochs=int(X[1])
         batch_size=int(X[2])
+        print("lr:",lr,"  epochs:",epoch,"  batch_size:",batch_size)
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
@@ -498,7 +499,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
         print("test loss: %.4f" % np.mean(losses))
 
         temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
-        print(temp_mse)
+        print("均方误差:", temp_mse)
         return temp_mse
 
 
@@ -529,8 +530,9 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(0)
 
-    # df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-    df = data
+    df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    df['OT'] = data
+    print(df)
     train = df.iloc[: int(trainrate * len(df)), :]
     test = df.iloc[int(trainrate * len(df)):, :]
 
