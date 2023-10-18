@@ -518,8 +518,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
         else:
             return (10**(-(count+1)))
 
-    ub = np.array([0.001, 2, 2])  # 优化算法上界
-    lb = np.array([0.0001, 1, 1])  # 优化算法下界
+    ub = np.array([0.001, 1, 1])  # 优化算法上界
+    lb = np.array([0.001, 1, 1])  # 优化算法下界
     pop = 5  # 种群大小
     MaxIter = 1  # 最大迭代次数
     dim = 3  # 优化变量维度
@@ -628,19 +628,27 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     # show
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
-
+    
+    print(pred)
     print(pred.shape, true.shape)
     plt.plot(pred[0, -24:, -1], label="pred")
     plt.plot(true[0, -24:, -1], label="true")
     plt.legend()
     plt.savefig(rootpath + "img/show.png")
     plt.show()
-
+    
 
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
-    y_test_predict = pred.ravel().reshape(-1, 1)
+    # y_test_predict = pred.ravel().reshape(-1, 1)
+    y_test_predict = np.array(preds)  # 将 preds 转换为 numpy 数组
+    y_test_predict = y_test_predict[:, -pred_len:, -1]  # 选择最后一个特征的预测结果
+    y_test_predict = y_test_predict.reshape(-1, 1)  # 将预测结果 reshape 成二维数组
+    print("y_test_predict:", y_test_predict)    
+    print("y_test_predict_shape:", y_test_predict.shape)
     scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
     train_data = train.iloc[:, 1:].values
+    print("train_data:", train_data)    
+    print("train_data_shape:", train_data.shape)
     scalarY.fit(train_data)
     y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
