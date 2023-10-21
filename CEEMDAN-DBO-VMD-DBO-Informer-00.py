@@ -629,7 +629,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
     
-    print(pred)
     print(pred.shape, true.shape)
     plt.plot(pred[0, -24:, -1], label="pred")
     plt.plot(true[0, -24:, -1], label="true")
