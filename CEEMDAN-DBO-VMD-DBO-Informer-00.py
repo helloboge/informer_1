@@ -640,20 +640,23 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
 
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
     # y_test_predict = pred.ravel().reshape(-1, 1)
-    y_test_predict = np.array(preds)  # 将 preds 转换为 numpy 数组
-    y_test_predict = y_test_predict[:, -pred_len:, -1]  # 选择最后一个特征的预测结果
-    y_test_predict = y_test_predict.reshape(-1, 1)  # 将预测结果 reshape 成二维数组
-    print("y_test_predict:", y_test_predict)    
-    print("y_test_predict_shape:", y_test_predict.shape)
-    scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
-    train_data = train.iloc[:, 1:].values
-    print("train_data:", train_data)    
-    print("train_data_shape:", train_data.shape)
-    scalarY.fit(train_data)
-    y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
-    y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
-    df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
-                                  index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
+    # y_test_predict = np.array(preds)  # 将 preds 转换为 numpy 数组
+    # y_test_predict = y_test_predict[:, -pred_len:, -1]  # 选择最后一个特征的预测结果
+    # y_test_predict = y_test_predict.reshape(-1, 1)  # 将预测结果 reshape 成二维数组
+    # print("y_test_predict:", y_test_predict)    
+    # print("y_test_predict_shape:", y_test_predict.shape)
+    # scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
+    # train_data = train.iloc[:, 1:].values
+    # print("train_data:", train_data)    
+    # print("train_data_shape:", train_data.shape)
+    # scalarY.fit(train_data)
+    # y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
+    # y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
+
+    df_predict_raw = pd.DataFrame({'raw': true.ravel(), 'predict': pred.ravel()},
+                              index=range(len(true)))  # 创建预测结果的DataFrame
+    # df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
+    #                               index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
     df_train_loss = pd.DataFrame({'loss': train_losses, 'val_loss': test_losses},
                                  index=range(len(test_losses)))  # 创建训练损失的DataFrame
 
