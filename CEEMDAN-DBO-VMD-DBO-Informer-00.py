@@ -413,100 +413,100 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     rootpath = "/kaggle/working/dbo-inf/"
     trainrate = 0.7
 
-    def training(X):
-        lr=X[0]
-        epochs=int(X[1])
-        batch_size=int(X[2])
-        print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
-        # writer = SummaryWriter(rootpath + "log/tensorboard/")
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        set_seed(0)
-        print(data)
-        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-        df['OT'] = data
-        print(df)
-        train = df.iloc[: int(trainrate * len(df)), :]
-        test = df.iloc[int(trainrate * len(df)):, :]
+    # def training(X):
+    #     lr=X[0]
+    #     epochs=int(X[1])
+    #     batch_size=int(X[2])
+    #     print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
+    #     # writer = SummaryWriter(rootpath + "log/tensorboard/")
+    #     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #     set_seed(0)
+    #     print(data)
+    #     df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    #     df['OT'] = data
+    #     print(df)
+    #     train = df.iloc[: int(trainrate * len(df)), :]
+    #     test = df.iloc[int(trainrate * len(df)):, :]
 
-        scaler = StandardScaler()
-        scaler.fit(train.iloc[:, 1:].values)
+    #     scaler = StandardScaler()
+    #     scaler.fit(train.iloc[:, 1:].values)
 
-        trainset = MyDataset(train, scaler, seq_len=96, label_len=48, pred_len=24)
-        trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
+    #     trainset = MyDataset(train, scaler, seq_len=96, label_len=48, pred_len=24)
+    #     trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 
-        testset = MyDataset(test, scaler, seq_len=96, label_len=48, pred_len=24)
-        testloader = DataLoader(testset, batch_size=batch_size, shuffle=False)
+    #     testset = MyDataset(test, scaler, seq_len=96, label_len=48, pred_len=24)
+    #     testloader = DataLoader(testset, batch_size=batch_size, shuffle=False)
 
-        model = Informer().to(device)
-        criterion = nn.MSELoss()
-        optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
+    #     model = Informer().to(device)
+    #     criterion = nn.MSELoss()
+    #     optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
 
-        # train
-        print("train...")
-        model.train()
-        for e in range(epochs):
-            losses = []
-            for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-                optimizer.zero_grad()
-                batch_x = batch_x.float().to(device)
-                batch_y = batch_y.float()
-                batch_x_mark = batch_x_mark.float().to(device)
-                batch_y_mark = batch_y_mark.float().to(device)
+    #     # train
+    #     print("train...")
+    #     model.train()
+    #     for e in range(epochs):
+    #         losses = []
+    #         for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
+    #             optimizer.zero_grad()
+    #             batch_x = batch_x.float().to(device)
+    #             batch_y = batch_y.float()
+    #             batch_x_mark = batch_x_mark.float().to(device)
+    #             batch_y_mark = batch_y_mark.float().to(device)
 
-                dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-                dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
+    #             dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
+    #             dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
 
-                pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-                pred = pred[:, -pred_len:, :].to(device)
-                true = batch_y[:, -pred_len:, :].to(device)
+    #             pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+    #             pred = pred[:, -pred_len:, :].to(device)
+    #             true = batch_y[:, -pred_len:, :].to(device)
 
-                loss = criterion(pred, true)
-                losses.append(loss.item())
+    #             loss = criterion(pred, true)
+    #             losses.append(loss.item())
 
-                loss.backward()
-                optimizer.step()
+    #             loss.backward()
+    #             optimizer.step()
 
-            print("Epochs:", e, " || train loss: %.4f" % np.mean(losses))
+    #         print("Epochs:", e, " || train loss: %.4f" % np.mean(losses))
 
-        torch.save(model, rootpath + "log/informer.pkl")
+    #     torch.save(model, rootpath + "log/informer.pkl")
 
-        # test
-        print("test...")
-        # model = torch.load("./Informer/log/informer.pkl").to(device)
+    #     # test
+    #     print("test...")
+    #     # model = torch.load("./Informer/log/informer.pkl").to(device)
 
-        model.eval()
-        losses = []
-        trues, preds = [], []
-        for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(testloader):
-            batch_x = batch_x.float().to(device)
-            batch_y = batch_y.float()
-            batch_x_mark = batch_x_mark.float().to(device)
-            batch_y_mark = batch_y_mark.float().to(device)
+    #     model.eval()
+    #     losses = []
+    #     trues, preds = [], []
+    #     for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(testloader):
+    #         batch_x = batch_x.float().to(device)
+    #         batch_y = batch_y.float()
+    #         batch_x_mark = batch_x_mark.float().to(device)
+    #         batch_y_mark = batch_y_mark.float().to(device)
 
-            dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-            dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
+    #         dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
+    #         dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
 
-            pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+    #         pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            preds.extend(pred.detach().cpu().numpy())
-            trues.extend(batch_y.detach().cpu().numpy())
+    #         preds.extend(pred.detach().cpu().numpy())
+    #         trues.extend(batch_y.detach().cpu().numpy())
 
-            pred = pred[:, -pred_len:, :].to(device)
-            true = batch_y[:, -pred_len:, :].to(device)
+    #         pred = pred[:, -pred_len:, :].to(device)
+    #         true = batch_y[:, -pred_len:, :].to(device)
 
-            loss = criterion(pred, true)
-            losses.append(loss.item())
-        print("test loss: %.4f" % np.mean(losses))
+    #         loss = criterion(pred, true)
+    #         losses.append(loss.item())
+    #     print("test loss: %.4f" % np.mean(losses))
 
-        temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
-        print("均方误差:", temp_mse)
-        return temp_mse
+    #     temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
+    #     print("均方误差:", temp_mse)
+    #     return temp_mse
 
 
-    #优化参数
-    # lr = 0.0001
-    # epochs = 4
-    # batch_size = 32
+    # #优化参数
+    # # lr = 0.0001
+    # # epochs = 4
+    # # batch_size = 32
 
     def round_lr(lr):
         count=0
@@ -518,19 +518,19 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
         else:
             return (10**(-(count+1)))
 
-    ub = np.array([0.001, 1, 1])  # 优化算法上界
-    lb = np.array([0.001, 1, 1])  # 优化算法下界
-    pop = 5  # 种群大小
-    MaxIter = 1  # 最大迭代次数
-    dim = 3  # 优化变量维度
-    GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
-    print('最优适应度值：', GbestScore)
-    print('最优解：', GbestPositon)
+    # ub = np.array([0.001, 1, 1])  # 优化算法上界
+    # lb = np.array([0.001, 1, 1])  # 优化算法下界
+    # pop = 5  # 种群大小
+    # MaxIter = 1  # 最大迭代次数
+    # dim = 3  # 优化变量维度
+    # GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
+    # print('最优适应度值：', GbestScore)
+    # print('最优解：', GbestPositon)
 
-    GbestPositon = GbestPositon[0]
-    lr = GbestPositon[0]
-    epochs = int(GbestPositon[1])
-    batch_size = int(GbestPositon[2])
+    # GbestPositon = GbestPositon[0]
+    # lr = GbestPositon[0]
+    # epochs = int(GbestPositon[1])
+    # batch_size = int(GbestPositon[2])
     lr = round_lr(lr)
     print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
     seq_len = 96
