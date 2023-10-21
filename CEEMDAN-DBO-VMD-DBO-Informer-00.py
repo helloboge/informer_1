@@ -653,8 +653,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     # y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     # y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
 
-    df_predict_raw = pd.DataFrame({'raw': true.ravel(), 'predict': pred.ravel()},
-                              index=range(len(true)))  # 创建预测结果的DataFrame
+    df_predict_raw = pd.DataFrame({'raw': true.ravel(), 'predict': pred.ravel()})  # 创建预测结果的DataFrame
     # df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
     #                               index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
     df_train_loss = pd.DataFrame({'loss': train_losses, 'val_loss': test_losses},
