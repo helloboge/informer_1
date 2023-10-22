@@ -421,7 +421,6 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
         # writer = SummaryWriter(rootpath + "log/tensorboard/")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         set_seed(0)
-        print(data)
         df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
         df['OT'] = data
         print(df)
@@ -518,8 +517,8 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
         else:
             return (10**(-(count+1)))
 
-    ub = np.array([0.001, 1, 1])  # 优化算法上界
-    lb = np.array([0.001, 1, 1])  # 优化算法下界
+    ub = np.array([0.001, 100, 96])  # 优化算法上界
+    lb = np.array([0.00001, 1, 1])  # 优化算法下界
     pop = 5  # 种群大小
     MaxIter = 1  # 最大迭代次数
     dim = 3  # 优化变量维度
