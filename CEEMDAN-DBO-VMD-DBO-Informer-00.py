@@ -53,7 +53,7 @@ plt.rcParams['axes.unicode_minus'] = False
 # In[4]:
 
 
-df_raw_data = pd.read_csv('data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
 X='OT'
 # df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
 # X = 'OT'  # 将字符串'OT'赋值给变量X，表示使用该列作为特征
@@ -404,128 +404,136 @@ def evaluation_model(y_test, y_pred):
 
 
 def informer_predict(data=None, predict_duration=len(test), fitting=None):
-    lr = 0.0001
-    epochs = 4
-    batch_size = 32
-    seq_len = 96
-    label_len = 48
-    pred_len = 24
-    rootpath = "./"
-    trainrate = 0.7
-
-    def training(X):
-        lr=X[0]
-        epochs=int(X[1])
-        batch_size=int(X[2])
-        print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
-        # writer = SummaryWriter(rootpath + "log/tensorboard/")
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        set_seed(0)
-        print(data)
-        df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
-        df['OT'] = data
-        print(df)
-        train = df.iloc[: int(trainrate * len(df)), :]
-        test = df.iloc[int(trainrate * len(df)):, :]
-
-        scaler = StandardScaler()
-        scaler.fit(train.iloc[:, 1:].values)
-
-        trainset = MyDataset(train, scaler, seq_len=96, label_len=48, pred_len=24)
-        trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
-
-        testset = MyDataset(test, scaler, seq_len=96, label_len=48, pred_len=24)
-        testloader = DataLoader(testset, batch_size=batch_size, shuffle=False)
-
-        model = Informer().to(device)
-        criterion = nn.MSELoss()
-        optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
-
-        # train
-        print("train...")
-        model.train()
-        for e in range(epochs):
-            losses = []
-            for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
-                optimizer.zero_grad()
-                batch_x = batch_x.float().to(device)
-                batch_y = batch_y.float()
-                batch_x_mark = batch_x_mark.float().to(device)
-                batch_y_mark = batch_y_mark.float().to(device)
-
-                dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-                dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-
-                pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-                pred = pred[:, -pred_len:, :].to(device)
-                true = batch_y[:, -pred_len:, :].to(device)
-
-                loss = criterion(pred, true)
-                losses.append(loss.item())
-
-                loss.backward()
-                optimizer.step()
-
-            print("Epochs:", e, " || train loss: %.4f" % np.mean(losses))
-
-        torch.save(model, rootpath + "log/informer.pkl")
-
-        # test
-        print("test...")
-        # model = torch.load("./Informer/log/informer.pkl").to(device)
-
-        model.eval()
-        losses = []
-        trues, preds = [], []
-        for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(testloader):
-            batch_x = batch_x.float().to(device)
-            batch_y = batch_y.float()
-            batch_x_mark = batch_x_mark.float().to(device)
-            batch_y_mark = batch_y_mark.float().to(device)
-
-            dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
-            dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
-
-            pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-
-            preds.extend(pred.detach().cpu().numpy())
-            trues.extend(batch_y.detach().cpu().numpy())
-
-            pred = pred[:, -pred_len:, :].to(device)
-            true = batch_y[:, -pred_len:, :].to(device)
-
-            loss = criterion(pred, true)
-            losses.append(loss.item())
-        print("test loss: %.4f" % np.mean(losses))
-
-        temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
-        print("均方误差:", temp_mse)
-        return temp_mse
-
-
-    #优化参数
     # lr = 0.0001
     # epochs = 4
     # batch_size = 32
+    # seq_len = 96
+    # label_len = 48
+    # pred_len = 24
+    # rootpath = "/kaggle/working/dbo-inf/"
+    # trainrate = 0.7
 
-    ub = np.array([0.001, 10, 64])  # 优化算法上界
-    lb = np.array([0.00001, 1, 1])  # 优化算法下界
-    pop = 5  # 种群大小
-    MaxIter = 1  # 最大迭代次数
-    dim = 3  # 优化变量维度
-    GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
-    print('最优适应度值：', GbestScore)
-    print('最优解：', GbestPositon)
+    # def training(X):
+    #     lr=X[0]
+    #     epochs=int(X[1])
+    #     batch_size=int(X[2])
+    #     print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
+    #     # writer = SummaryWriter(rootpath + "log/tensorboard/")
+    #     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #     set_seed(0)
+    #     df = pd.read_csv(rootpath + "data/ETT/ETTh1.csv")
+    #     df['OT'] = data
+    #     print(df)
+    #     train = df.iloc[: int(trainrate * len(df)), :]
+    #     test = df.iloc[int(trainrate * len(df)):, :]
 
-    GbestPositon = GbestPositon[0]
-    lr = GbestPositon[0]
-    epochs = int(GbestPositon[1])
-    batch_size = int(GbestPositon[2])
+    #     scaler = StandardScaler()
+    #     scaler.fit(train.iloc[:, 1:].values)
+
+    #     trainset = MyDataset(train, scaler, seq_len=96, label_len=48, pred_len=24)
+    #     trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
+
+    #     testset = MyDataset(test, scaler, seq_len=96, label_len=48, pred_len=24)
+    #     testloader = DataLoader(testset, batch_size=batch_size, shuffle=False)
+
+    #     model = Informer().to(device)
+    #     criterion = nn.MSELoss()
+    #     optimizer = optim.Adam(model.parameters(), lr=lr,weight_decay=1e-3)
+
+    #     # train
+    #     print("train...")
+    #     model.train()
+    #     for e in range(epochs):
+    #         losses = []
+    #         for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(trainloader):
+    #             optimizer.zero_grad()
+    #             batch_x = batch_x.float().to(device)
+    #             batch_y = batch_y.float()
+    #             batch_x_mark = batch_x_mark.float().to(device)
+    #             batch_y_mark = batch_y_mark.float().to(device)
+
+    #             dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
+    #             dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
+
+    #             pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+    #             pred = pred[:, -pred_len:, :].to(device)
+    #             true = batch_y[:, -pred_len:, :].to(device)
+
+    #             loss = criterion(pred, true)
+    #             losses.append(loss.item())
+
+    #             loss.backward()
+    #             optimizer.step()
+
+    #         print("Epochs:", e, " || train loss: %.4f" % np.mean(losses))
+
+    #     torch.save(model, rootpath + "log/informer.pkl")
+
+    #     # test
+    #     print("test...")
+    #     # model = torch.load("./Informer/log/informer.pkl").to(device)
+
+    #     model.eval()
+    #     losses = []
+    #     trues, preds = [], []
+    #     for (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(testloader):
+    #         batch_x = batch_x.float().to(device)
+    #         batch_y = batch_y.float()
+    #         batch_x_mark = batch_x_mark.float().to(device)
+    #         batch_y_mark = batch_y_mark.float().to(device)
+
+    #         dec_inp = torch.zeros([batch_y.shape[0], pred_len, batch_y.shape[-1]]).float()
+    #         dec_inp = torch.cat([batch_y[:, :label_len, :], dec_inp], dim=1).float().to(device)
+
+    #         pred = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+    #         preds.extend(pred.detach().cpu().numpy())
+    #         trues.extend(batch_y.detach().cpu().numpy())
+
+    #         pred = pred[:, -pred_len:, :].to(device)
+    #         true = batch_y[:, -pred_len:, :].to(device)
+
+    #         loss = criterion(pred, true)
+    #         losses.append(loss.item())
+    #     print("test loss: %.4f" % np.mean(losses))
+
+    #     temp_mse = mean_squared_error(pred.cpu().detach().numpy().reshape(-1, 1), true.cpu().detach().numpy().reshape(-1, 1))  # 计算均方误差
+    #     print("均方误差:", temp_mse)
+    #     return temp_mse
+
+
+    # ub = np.array([0.001, 120, 100])  # 优化算法上界
+    # lb = np.array([0.0001, 90, 80])  # 优化算法下界
+    # pop = 5  # 种群大小
+    # MaxIter = 1  # 最大迭代次数
+    # dim = 3  # 优化变量维度
+    # GbestScore, GbestPositon, Curve = DBO(pop, dim, lb, ub, MaxIter, training)  # 使用Differential Evolution进行优化
+    # print('最优适应度值：', GbestScore)
+    # print('最优解：', GbestPositon)
+    
+    def round_lr(lr):
+        count=0
+        while(lr*10<1):
+            count+=1
+            lr=lr*10
+        if(lr*10>4):
+            return (10**(-(count)))
+        else:
+            return (10**(-(count+1)))
+    #优化参数
+    lr = 0.001
+    epochs = 100
+    batch_size = 87
+    # GbestPositon = GbestPositon[0]
+    # lr = GbestPositon[0]
+    # epochs = int(GbestPositon[1])
+    # batch_size = int(GbestPositon[2])
+    lr = round_lr(lr)
     print("lr:",lr,"  epochs:",epochs,"  batch_size:",batch_size)
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "./"
+    rootpath = "/kaggle/working/dbo-inf/"
     trainrate = 0.7
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -617,25 +625,34 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     # show
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
-
+    
     print(pred.shape, true.shape)
     plt.plot(pred[0, -24:, -1], label="pred")
     plt.plot(true[0, -24:, -1], label="true")
     plt.legend()
     plt.savefig(rootpath + "img/show.png")
     plt.show()
-
+    
 
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
-    y_test_predict = pred.ravel().reshape(-1, 1)
-    scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
-    y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
-    y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
-    df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
-                                  index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
-    df_train_loss = pd.DataFrame({'loss': train_losses, 'val_loss': test_losses},
-                                 index=range(len(test_losses)))  # 创建训练损失的DataFrame
+    # y_test_predict = pred.ravel().reshape(-1, 1)
+    # y_test_predict = np.array(preds)  # 将 preds 转换为 numpy 数组
+    # y_test_predict = y_test_predict[:, -pred_len:, -1]  # 选择最后一个特征的预测结果
+    # y_test_predict = y_test_predict.reshape(-1, 1)  # 将预测结果 reshape 成二维数组
+    # print("y_test_predict:", y_test_predict)    
+    # print("y_test_predict_shape:", y_test_predict.shape)
+    # scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
+    # train_data = train.iloc[:, 1:].values
+    # print("train_data:", train_data)    
+    # print("train_data_shape:", train_data.shape)
+    # scalarY.fit(train_data)
+    # y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
+    # y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
 
+    df_predict_raw = pd.DataFrame({'raw': true.ravel(), 'predict': pred.ravel()})  # 创建预测结果的DataFrame
+    # df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
+    #                               index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
+    df_train_loss = train_losses
     return df_predict_raw, df_gru_evaluation, df_train_loss
 
 
@@ -695,31 +712,31 @@ print('======Co-IMF0 最终预测======\n', co_imf0_gru_evaluation)  # 打印 Co
 
 co_imf0_predict_raw.plot(title='Co-IMF0 预测结果')  # 绘制 Co-IMF0 的预测结果图，设置标题为 'Co-IMF0 预测结果'
 
-co_imf0_train_loss.plot(title='Co-IMF0 训练损失')  # 绘制 Co-IMF0 的训练损失图，设置标题为 'Co-IMF0 训练损失'
+# co_imf0_train_loss.plot(title='Co-IMF0 训练损失')  # 绘制 Co-IMF0 的训练损失图，设置标题为 'Co-IMF0 训练损失'
 
 
 # In[ ]:
 
 
-co_imf1_predict_raw, co_imf1_gru_evaluation, co_imf1_train_loss = informer_predict(df_integrate_result['co-imf1'])  # 使用 LSTM 进行预测并得到预测结果、评估结果和训练损失
+co_imf1_predict_raw, co_imf1_gru_evaluation, co_imf1_train_loss = informer_predict(df_integrate_result['co-imf1'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
 
 print('======Co-IMF1 最终预测======\n', co_imf1_gru_evaluation)  # 打印 Co-IMF1 的最终预测评估结果
 
 co_imf1_predict_raw.plot(title='Co-IMF1 预测结果')  # 绘制 Co-IMF1 的预测结果图，设置标题为 'Co-IMF1 预测结果'
 
-co_imf1_train_loss.plot(title='Co-IMF1 训练损失')  # 绘制 Co-IMF1 的训练损失图，设置标题为 'Co-IMF1 训练损失'
+# co_imf1_train_loss.plot(title='Co-IMF1 训练损失')  # 绘制 Co-IMF1 的训练损失图，设置标题为 'Co-IMF1 训练损失'
 
 
 # In[ ]:
 
 
-co_imf2_predict_raw, co_imf2_gru_evaluation, co_imf2_train_loss = informer_predict(df_integrate_result['co-imf2'])  # 使用 LSTM 进行预测并得到预测结果、评估结果和训练损失
+co_imf2_predict_raw, co_imf2_gru_evaluation, co_imf2_train_loss = informer_predict(df_integrate_result['co-imf2'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
 
 print('======Co-IMF2 最终预测======\n', co_imf2_gru_evaluation)  # 打印 Co-IMF2 的最终预测评估结果
 
 co_imf2_predict_raw.plot(title='Co-IMF2 预测结果')  # 绘制 Co-IMF2 的预测结果图，设置标题为 'Co-IMF2 预测结果'
 
-co_imf2_train_loss.plot(title='Co-IMF2 训练损失')  # 绘制 Co-IMF2 的训练损失图，设置标题为 'Co-IMF2 训练损失'
+# co_imf2_train_loss.plot(title='Co-IMF2 训练损失')  # 绘制 Co-IMF2 的训练损失图，设置标题为 'Co-IMF2 训练损失'
 
 
 # In[ ]:
@@ -739,7 +756,7 @@ print('======最终预测======\n', df_add_evaluation)  # 打印最终预测的�
 plt.figure(figsize=(12, 3))
 
 # 设置图形标题和字体大小
-plt.title('CEEMDAN-DBO-VMD-DBO-LSTM', size=15)
+plt.title('CEEMDAN-DBO-VMD-DBO-informer', size=15)
 
 # 绘制真实值曲线
 plt.plot(test, color='r', linewidth=2.5, linestyle="-", label='Actual')
