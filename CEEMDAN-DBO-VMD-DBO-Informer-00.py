@@ -53,7 +53,7 @@ plt.rcParams['axes.unicode_minus'] = False
 # In[4]:
 
 
-df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+df_raw_data = pd.read_csv('data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
 X='OT'
 # df_raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
 # X = 'OT'  # 将字符串'OT'赋值给变量X，表示使用该列作为特征
@@ -403,14 +403,14 @@ def evaluation_model(y_test, y_pred):
 # In[15]:
 
 
-def informer_predict(data=None, predict_duration=len(test), fitting=None, scalarY=None):
+def informer_predict(data=None, predict_duration=len(test), fitting=None):
     lr = 0.0001
     epochs = 4
     batch_size = 32
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "/kaggle/working/dbo-inf/"
+    rootpath = "./"
     trainrate = 0.7
 
     def training(X):
@@ -525,7 +525,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "/kaggle/working/dbo-inf/"
+    rootpath = "./"
     trainrate = 0.7
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -628,7 +628,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None, scalar
 
     df_gru_evaluation = evaluation_model(true, pred)  # 评估模型性能
     y_test_predict = pred.ravel().reshape(-1, 1)
-
+    scalarY = MinMaxScaler(feature_range=(0, 1))  # 创建MinMaxScaler对象，用于目标变量归一化
     y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
     df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
