@@ -117,7 +117,7 @@ if __name__ == "__main__":
         pred = pred[:, -pred_len:, :].to(device)
         true = batch_y[:, -pred_len:, :].to(device)
         print( true.shape, pred.shape)
-        r2 = r2_score(true[0], pred[0])  # 计算R^2分数
+        r2 = r2_score(true.detach().cpu().numpy()[0], pred.detach().cpu().numpy()[0])  # 计算R^2分数
         print(r2)
         # mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
         # mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
