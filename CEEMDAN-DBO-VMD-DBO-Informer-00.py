@@ -51,9 +51,9 @@ plt.rcParams['axes.unicode_minus'] = False
 
 
 # In[4]:
-raw_data = pd.read_csv("./data/ETT/ETTh1.csv")
+raw_data = pd.read_csv("/kaggle/working/dbo-inf/data/ETT/ETTh1.csv")
 
-df_raw_data = pd.read_csv('./data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
+df_raw_data = pd.read_csv('/kaggle/working/dbo-inf/data/ETT/ETTh1.csv', usecols=[0, 7])  # 从名为'ETTh1.csv'的CSV文件中读取数据，只使用第一列和第二列的数据创建DataFrame对象
 X='OT'
 
 # X = 'OT'  # 将字符串'OT'赋值给变量X，表示使用该列作为特征
