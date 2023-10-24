@@ -9,7 +9,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 # from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, mean_absolute_percentage_error  # 导入评估指标函数
 from data.dataset import MyDataset
 from model.informer import Informer
 from utils.setseed import set_seed
@@ -17,7 +17,7 @@ from utils.setseed import set_seed
 warnings.filterwarnings("ignore")
 
 lr = 0.0001
-epochs = 100
+epochs = 50
 batch_size = 32
 seq_len = 96
 label_len = 48
