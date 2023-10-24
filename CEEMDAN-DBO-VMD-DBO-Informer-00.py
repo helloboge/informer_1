@@ -533,7 +533,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     seq_len = 96
     label_len = 48
     pred_len = 24
-    rootpath = "./"
+    rootpath = "/kaggle/working/dbo-inf/"
     trainrate = 0.7
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
