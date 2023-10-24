@@ -115,6 +115,11 @@ if __name__ == "__main__":
 
         pred = pred[:, -pred_len:, :].to(device)
         true = batch_y[:, -pred_len:, :].to(device)
+        print( true.shape, pred.shape)
+        r2 = r2_score(true, pred)  # 计算R^2分数
+        mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
+        mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
+        print("r2:",r2,"mse:",mse,"mae:",mae)
 
         loss = criterion(pred, true)
         losses.append(loss.item())
@@ -126,17 +131,20 @@ if __name__ == "__main__":
     # show
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
-    pred= pred.reshape(-1, 1)
-    true= true.reshape(-1, 1)
-    print(pred.shape, true.shape)
-    print(true, pred)
-    r2 = r2_score(true, pred)  # 计算R^2分数
-    mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
-    mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
-    print("r2:",r2,"mse:",mse,"mae:",mae)
+
     print(pred.shape, true.shape)
     plt.plot(pred[0, -24:, -1], label="pred")
     plt.plot(true[0, -24:, -1], label="true")
     plt.legend()
     plt.savefig(rootpath + "img/show.png")
     plt.show()
+
+
+    # pred= pred.reshape(-1, 1)
+    # true= true.reshape(-1, 1)
+    # print(pred.shape, true.shape)
+    # print(true, pred)
+    # r2 = r2_score(true, pred)  # 计算R^2分数
+    # mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
+    # mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
+    # print("r2:",r2,"mse:",mse,"mae:",mae)
