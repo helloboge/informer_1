@@ -649,7 +649,7 @@ def informer_predict(data=None, predict_duration=len(test), fitting=None):
     # y_test_predict_result = scalarY.inverse_transform(y_test_predict)  # 将预测结果反归一化
     # y_test_raw = scalarY.inverse_transform(true)  # 将测试集目标值反归一化
 
-    df_predict_raw = pd.DataFrame({'raw': true.ravel(), 'predict': pred.ravel()})  # 创建预测结果的DataFrame
+    df_predict_raw = pd.DataFrame({'raw': true, 'predict': pred})  # 创建预测结果的DataFrame
     # df_predict_raw = pd.DataFrame({'raw': y_test_raw.ravel(), 'predict': y_test_predict_result.ravel()},
     #                               index=range(len(y_test_raw)))  # 创建预测结果的DataFrame
     df_train_loss = train_losses
@@ -710,83 +710,83 @@ co_imf0_predict_raw, co_imf0_gru_evaluation, co_imf0_train_loss = informer_predi
 
 print('======Co-IMF0 最终预测======\n', co_imf0_gru_evaluation)  # 打印 Co-IMF0 的最终预测评估结果
 
-print(co_imf0_predict_raw)
+print("co_imf0_predict_raw:",co_imf0_predict_raw)
 
 co_imf0_predict_raw.plot(title='Co-IMF0 预测结果')  # 绘制 Co-IMF0 的预测结果图，设置标题为 'Co-IMF0 预测结果'
 
 # co_imf0_train_loss.plot(title='Co-IMF0 训练损失')  # 绘制 Co-IMF0 的训练损失图，设置标题为 'Co-IMF0 训练损失'
 
 
-# In[ ]:
+# # In[ ]:
 
 
-co_imf1_predict_raw, co_imf1_gru_evaluation, co_imf1_train_loss = informer_predict(df_integrate_result['co-imf1'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
+# co_imf1_predict_raw, co_imf1_gru_evaluation, co_imf1_train_loss = informer_predict(df_integrate_result['co-imf1'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
 
-print('======Co-IMF1 最终预测======\n', co_imf1_gru_evaluation)  # 打印 Co-IMF1 的最终预测评估结果
+# print('======Co-IMF1 最终预测======\n', co_imf1_gru_evaluation)  # 打印 Co-IMF1 的最终预测评估结果
 
-print(co_imf1_predict_raw)
+# print(co_imf1_predict_raw)
 
-co_imf1_predict_raw.plot(title='Co-IMF1 预测结果')  # 绘制 Co-IMF1 的预测结果图，设置标题为 'Co-IMF1 预测结果'
+# co_imf1_predict_raw.plot(title='Co-IMF1 预测结果')  # 绘制 Co-IMF1 的预测结果图，设置标题为 'Co-IMF1 预测结果'
 
-# co_imf1_train_loss.plot(title='Co-IMF1 训练损失')  # 绘制 Co-IMF1 的训练损失图，设置标题为 'Co-IMF1 训练损失'
-
-
-# In[ ]:
+# # co_imf1_train_loss.plot(title='Co-IMF1 训练损失')  # 绘制 Co-IMF1 的训练损失图，设置标题为 'Co-IMF1 训练损失'
 
 
-co_imf2_predict_raw, co_imf2_gru_evaluation, co_imf2_train_loss = informer_predict(df_integrate_result['co-imf2'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
-
-print('======Co-IMF2 最终预测======\n', co_imf2_gru_evaluation)  # 打印 Co-IMF2 的最终预测评估结果
-
-print(co_imf2_predict_raw)
-
-co_imf2_predict_raw.plot(title='Co-IMF2 预测结果')  # 绘制 Co-IMF2 的预测结果图，设置标题为 'Co-IMF2 预测结果'
-
-# co_imf2_train_loss.plot(title='Co-IMF2 训练损失')  # 绘制 Co-IMF2 的训练损失图，设置标题为 'Co-IMF2 训练损失'
+# # In[ ]:
 
 
-# In[ ]:
+# co_imf2_predict_raw, co_imf2_gru_evaluation, co_imf2_train_loss = informer_predict(df_integrate_result['co-imf2'])  # 使用 informer_predict 进行预测并得到预测结果、评估结果和训练损失
+
+# print('======Co-IMF2 最终预测======\n', co_imf2_gru_evaluation)  # 打印 Co-IMF2 的最终预测评估结果
+
+# print(co_imf2_predict_raw)
+
+# co_imf2_predict_raw.plot(title='Co-IMF2 预测结果')  # 绘制 Co-IMF2 的预测结果图，设置标题为 'Co-IMF2 预测结果'
+
+# # co_imf2_train_loss.plot(title='Co-IMF2 训练损失')  # 绘制 Co-IMF2 的训练损失图，设置标题为 'Co-IMF2 训练损失'
 
 
-result = co_imf0_predict_raw['predict'] + co_imf1_predict_raw['predict'] + co_imf2_predict_raw['predict']  # 将 Co-IMF0、Co-IMF1 和 Co-IMF2 的预测结果相加得到最终预测结果
-
-print("raw_data的值:", raw_data)
-print("result的值:", result)
-
-df_add_evaluation = evaluation_model(raw_data, result)  # 对最终预测结果和真实值进行评估，得到评估结果
-
-print('======最终预测======\n', df_add_evaluation)  # 打印最终预测的评估结果
+# # In[ ]:
 
 
-# In[ ]:
+# result = co_imf0_predict_raw['predict'] + co_imf1_predict_raw['predict'] + co_imf2_predict_raw['predict']  # 将 Co-IMF0、Co-IMF1 和 Co-IMF2 的预测结果相加得到最终预测结果
+
+# print("raw_data的值:", df_raw_data)
+# print("result的值:", result)
+
+# df_add_evaluation = evaluation_model(df_raw_data, result)  # 对最终预测结果和真实值进行评估，得到评估结果
+
+# print('======最终预测======\n', df_add_evaluation)  # 打印最终预测的评估结果
 
 
-# 创建一个图形窗口
-plt.figure(figsize=(12, 3))
-
-# 设置图形标题和字体大小
-plt.title('CEEMDAN-DBO-VMD-DBO-informer', size=15)
-
-# 绘制真实值曲线
-plt.plot(raw_data, color='r', linewidth=2.5, linestyle="-", label='Actual')
-
-# 绘制预测值曲线
-plt.plot(result, color='yellow', linewidth=2, linestyle="--", label='Prediction')
-
-# 显示图例
-plt.legend()
-
-# 设置y轴标签和字体大小
-plt.ylabel('O3', size=15)
-
-# 设置x轴标签和字体大小
-plt.xlabel('time/day', size=15)
-
-# 显示图形
-plt.show()
+# # In[ ]:
 
 
-# In[ ]:
+# # 创建一个图形窗口
+# plt.figure(figsize=(12, 3))
+
+# # 设置图形标题和字体大小
+# plt.title('CEEMDAN-DBO-VMD-DBO-informer', size=15)
+
+# # 绘制真实值曲线
+# plt.plot(raw_data, color='r', linewidth=2.5, linestyle="-", label='Actual')
+
+# # 绘制预测值曲线
+# plt.plot(result, color='yellow', linewidth=2, linestyle="--", label='Prediction')
+
+# # 显示图例
+# plt.legend()
+
+# # 设置y轴标签和字体大小
+# plt.ylabel('O3', size=15)
+
+# # 设置x轴标签和字体大小
+# plt.xlabel('time/day', size=15)
+
+# # 显示图形
+# plt.show()
+
+
+# # In[ ]:
 
 
 
