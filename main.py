@@ -126,6 +126,8 @@ if __name__ == "__main__":
     # show
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
+    pred= pred.cpu().detach().numpy().reshape(-1, 1)
+    true= true.cpu().detach().numpy().reshape(-1, 1)
     print(pred.shape, true.shape)
     print(true, pred)
     r2 = r2_score(true, pred)  # 计算R^2分数
