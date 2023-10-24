@@ -22,7 +22,7 @@ batch_size = 32
 seq_len = 96
 label_len = 48
 pred_len = 24
-rootpath = "./"
+rootpath = "/kaggle/working/dbo-inf/"
 trainrate = 0.7
 
 if __name__ == "__main__":
