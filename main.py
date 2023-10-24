@@ -17,7 +17,7 @@ from utils.setseed import set_seed
 warnings.filterwarnings("ignore")
 
 lr = 0.0001
-epochs = 50
+epochs = 4
 batch_size = 32
 seq_len = 96
 label_len = 48
@@ -126,6 +126,8 @@ if __name__ == "__main__":
     # show
     pred = np.load(rootpath + "log/preds.npy")
     true = np.load(rootpath + "log/tures.npy")
+    print(pred.shape, true.shape)
+    print(true, pred)
     r2 = r2_score(true, pred)  # 计算R^2分数
     mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
     mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
