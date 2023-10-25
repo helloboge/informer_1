@@ -112,21 +112,26 @@ if __name__ == "__main__":
 
         preds.extend(pred.detach().cpu().numpy())
         trues.extend(batch_y.detach().cpu().numpy())
-        true=batch_y
-        
+       
         pred = pred[:, -pred_len:, :].to(device)
         true = batch_y[:, -pred_len:, :].to(device)
         print( true.shape, pred.shape)
-        r2 = r2_score(true.detach().cpu().numpy()[0], pred.detach().cpu().numpy()[0])  # 计算R^2分数
-        print(r2)
-        # mse = mean_squared_error(true, pred)  # 计算均方误差（MSE）
-        # mae = mean_absolute_error(true, pred)  # 计算绝对误差和平均值(MAE)
-        # print("r2:",r2,"mse:",mse,"mae:",mae)
 
         loss = criterion(pred, true)
         losses.append(loss.item())
     print("test loss: %.4f" % np.mean(losses))
-
+    # 计算均方误差（MSE）
+    mse = mean_squared_error(np.array(trues), np.array(preds))
+    print("均方误差（MSE）:", mse)
+    
+    # 计算平均绝对误差（MAE）
+    mae = mean_absolute_error(np.array(trues), np.array(preds))
+    print("平均绝对误差（MAE）:", mae)
+    
+    # 计算R2（决定系数）
+    r2 = r2_score(np.array(trues), np.array(preds))
+    print("R2（决定系数）:", r2)
+    
     np.save(rootpath + "log/preds", np.array(preds))
     np.save(rootpath + "log/tures", np.array(trues))
 
