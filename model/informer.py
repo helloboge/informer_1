@@ -1,8 +1,10 @@
 from torch import nn
 
-from model.decoder import Decoder
-from model.encoder import Encoder
+from dbo_inf.model.decoder import Decoder
+from dbo_inf.model.encoder import Encoder
 
+# from model.decoder import Decoder
+# from model.encoder import Encoder
 
 class Informer(nn.Module):
     def __init__(
