@@ -1,11 +1,15 @@
 import torch.nn.functional as F
 from torch import nn
 
-from model.attention import ProbAttention, FullAttention
+from dbo_inf.model.attention import ProbAttention, FullAttention
 
-from model.embed import DataEmbedding
-from utils.mask import get_attn_subsequence_mask
+from dbo_inf.model.embed import DataEmbedding
+from dbo_inf.utils.mask import get_attn_subsequence_mask
 
+# from model.attention import ProbAttention, FullAttention
+
+# from model.embed import DataEmbedding
+# from utils.mask import get_attn_subsequence_mask
 
 class DecoderLayer(nn.Module):
     def __init__(self, d_k, d_v, d_model, d_ff, n_heads, c, dropout):
