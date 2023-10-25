@@ -120,8 +120,10 @@ if __name__ == "__main__":
         losses.append(loss.item())
     
     print("test loss: %.4f" % np.mean(losses))
+    print(len(trues),len(trues[0]))
     trues2d = np.array(trues).reshape(-1, 7)  # 将trues转换为2D数组
     preds2d = np.array(preds).reshape(-1, 7)  # 将preds转换为2D数组
+    print(len(trues2d))
     # 计算均方误差（MSE）
     mse = mean_squared_error(np.array(trues2d), np.array(preds2d))
     print("均方误差（MSE）:", mse)
