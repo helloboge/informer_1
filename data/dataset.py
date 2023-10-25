@@ -1,9 +1,9 @@
 import pandas as pd
 from torch.utils.data import Dataset
 
-from utils.timefeature import timefeature
+from dbo_inf.utils.timefeature import timefeature
 
-
+# from utils.timefeature import timefeature
 class MyDataset(Dataset):
     def __init__(self, df, scaler, seq_len=96, label_len=48, pred_len=24):
         self.seq_len = seq_len
