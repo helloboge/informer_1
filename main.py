@@ -120,7 +120,6 @@ if __name__ == "__main__":
         losses.append(loss.item())
     
     print("test loss: %.4f" % np.mean(losses))
-    print(trues,preds)
     
     # 计算均方误差（MSE）
     mse = mean_squared_error(np.array(trues), np.array(preds))
