@@ -2,11 +2,13 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from model.attention import ProbAttention
+from dbo_inf.model.attention import ProbAttention
 
-from model.embed import DataEmbedding
+from dbo_inf.model.embed import DataEmbedding
 
+# from model.attention import ProbAttention
 
+# from model.embed import DataEmbedding
 class ConvLayer(nn.Module):
     def __init__(self, c_in):
         super(ConvLayer, self).__init__()
