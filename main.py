@@ -17,7 +17,7 @@ from utils.setseed import set_seed
 warnings.filterwarnings("ignore")
 
 lr = 0.0001
-epochs = 4
+epochs = 50
 batch_size = 32
 seq_len = 96
 label_len = 48
