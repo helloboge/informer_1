@@ -115,11 +115,15 @@ if __name__ == "__main__":
        
         pred = pred[:, -pred_len:, :].to(device)
         true = batch_y[:, -pred_len:, :].to(device)
-        print( true.shape, pred.shape)
 
         loss = criterion(pred, true)
         losses.append(loss.item())
+    
     print("test loss: %.4f" % np.mean(losses))
+
+    print(trues.shape, preds.shape)
+    print(trues,preds)
+    
     # 计算均方误差（MSE）
     mse = mean_squared_error(np.array(trues), np.array(preds))
     print("均方误差（MSE）:", mse)
