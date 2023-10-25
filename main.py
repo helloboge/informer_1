@@ -120,17 +120,18 @@ if __name__ == "__main__":
         losses.append(loss.item())
     
     print("test loss: %.4f" % np.mean(losses))
-    
+    trues2d = np.array(trues).reshape(-1, 7)  # 将trues转换为2D数组
+    preds2d = np.array(preds).reshape(-1, 7)  # 将preds转换为2D数组
     # 计算均方误差（MSE）
-    mse = mean_squared_error(np.array(trues), np.array(preds))
+    mse = mean_squared_error(np.array(trues2d), np.array(preds2d))
     print("均方误差（MSE）:", mse)
     
     # 计算平均绝对误差（MAE）
-    mae = mean_absolute_error(np.array(trues), np.array(preds))
+    mae = mean_absolute_error(np.array(trues2d), np.array(preds2d))
     print("平均绝对误差（MAE）:", mae)
     
     # 计算R2（决定系数）
-    r2 = r2_score(np.array(trues), np.array(preds))
+    r2 = r2_score(np.array(trues2d), np.array(preds2d))
     print("R2（决定系数）:", r2)
     
     np.save(rootpath + "log/preds", np.array(preds))
