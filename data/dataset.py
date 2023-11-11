@@ -1,7 +1,7 @@
 import pandas as pd
 from torch.utils.data import Dataset
 
-from dbo_inf.utils.timefeature import timefeature
+from informer_1.utils.timefeature import timefeature
 
 # from utils.timefeature import timefeature
 class MyDataset(Dataset):
