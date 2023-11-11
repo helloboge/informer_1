@@ -1,7 +1,7 @@
 from torch import nn
 
-from dbo_inf.model.decoder import Decoder
-from dbo_inf.model.encoder import Encoder
+from informer_1.model.decoder import Decoder
+from informer_1.model.encoder import Encoder
 
 # from model.decoder import Decoder
 # from model.encoder import Encoder
