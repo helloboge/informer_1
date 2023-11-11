@@ -2,9 +2,9 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from dbo_inf.model.attention import ProbAttention
+from informer_1.model.attention import ProbAttention
 
-from dbo_inf.model.embed import DataEmbedding
+from informer_1.model.embed import DataEmbedding
 
 # from model.attention import ProbAttention
 
