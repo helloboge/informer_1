@@ -1,10 +1,10 @@
 import torch.nn.functional as F
 from torch import nn
 
-from dbo_inf.model.attention import ProbAttention, FullAttention
+from informer_1.model.attention import ProbAttention, FullAttention
 
-from dbo_inf.model.embed import DataEmbedding
-from dbo_inf.utils.mask import get_attn_subsequence_mask
+from informer_1.model.embed import DataEmbedding
+from informer_1.utils.mask import get_attn_subsequence_mask
 
 # from model.attention import ProbAttention, FullAttention
 
